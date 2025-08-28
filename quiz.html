@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Skill Master - Quiz with Course & Level</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #283e51, #485563);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px 80px;
+    user-select: none;
+  }
+  .quiz-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 40px 50px 50px;
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 15px 40px rgba(255,255,255,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  h2 {
+    margin: 0 0 20px;
+    font-weight: 700;
+    font-size: 1.9rem;
+    text-align: center;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+  }
+  select {
+    margin: 0 10px 30px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: #27b69a;
+    color: #fff;
+    box-shadow: 0 6px 15px rgba(39,182,154,0.7);
+    transition: background-color 0.3s ease;
+  }
+  select:hover {
+    background-color: #1e8c7a;
+  }
+  .selectors {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .question-number {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: #d3d3d3;
+  }
+  .question-text {
+    font-size: 1.3rem;
+    margin-bottom: 25px;
+    min-height: 70px;
+    text-align: center;
+  }
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+  }
+  .option {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    padding: 15px 25px;
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+  }
+  .option:hover {
+    background: #a6f1e0;
+    color: #185a9d;
+  }
+  .option.selected {
+    background: #47d6ac;
+    color: #fff;
+    font-weight: 700;
+    border-color: #27b69a;
+    box-shadow: 0 6px 20px #27b69a;
+  }
+  .buttons {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+  }
+  button {
+    background: #185a9d;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(24, 90, 157, 0.7);
+    transition: background 0.3s ease, transform 0.2s ease;
+    min-width: 110px;
+  }
+  button:disabled {
+    background: #4a6b8a;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  button:hover:not(:disabled) {
+    background: #27b69a;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px #27b69a;
+  }
+  .result-container {
+    text-align: center;
+    margin-top: 20px;
+    animation: fadeIn 1s ease forwards;
+    display: none;
+  }
+  .score-circle {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  svg circle {
+    fill: none;
+    stroke-width: 12;
+    stroke-linecap: round;
+  }
+  .circle-bg {
+    stroke: #222;
+  }
+  .circle-progress {
+    stroke: #27b69a;
+    stroke-dasharray: 440;
+    stroke-dashoffset: 440;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+  .score-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #27b69a;
+  }
+  .performance-msg {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #a6f1e0;
+    margin-top: 12px;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+</head>
+<body>
+
+ <div class="quiz-container">
+  <h2 id="quizTitle">Select Course and Level</h2>
+
+  <div class="selectors">
+    <select id="courseSelect" aria-label="Select Course">
+      <option value="" disabled selected>Select Course</option>
+    </select>
+
+    <select id="levelSelect" aria-label="Select Level" disabled>
+      <option value="" disabled selected>Select Level</option>
+    </select>
+  </div>
+
+  <div class="question-number" id="questionNumber"></div>
+  <div class="question-text" id="questionText">Please select course and level to start.</div>
+  <div class="options" id="optionsContainer"></div>
+
+  <div class="buttons">
+    <button id="prevBtn" disabled>Previous</button>
+    <button id="skipBtn" disabled>Skip</button>
+    <button id="nextBtn" disabled>Next</button>
+    <button id="submitBtn" style="display:none;">Submit</button>
+  </div>
+
+  <div class="result-container" id="resultContainer">
+    <div class="score-circle">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle class="circle-bg" cx="70" cy="70" r="60" />
+        <circle class="circle-progress" cx="70" cy="70" r="60" id="progressCircle" />
+      </svg>
+      <div class="score-text" id="scoreText">0%</div>
+    </div>
+    <div class="performance-msg" id="performanceMsg"></div>
+    <div style="margin-top: 30px;">
+      <button onclick="retryQuiz()">Retry Quiz</button>
+      <button onclick="goDashboard()">Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const quizData = {
+  Python: {
+    Beginner: [
+      { question: "What is the output of print(2 + 3)?", options: ["5", "23", "Error", "None"], answer: "5" },
+      { question: "Which keyword is used for function in Python?", options: ["func", "def", "function", "define"], answer: "def" },
+      { question: "What data type is 'Hello'?", options: ["int", "string", "float", "bool"], answer: "string" },
+      { question: "How do you insert COMMENTS in Python code?", options: ["// comment", "# comment", "/* comment */", "<!-- comment -->"], answer: "# comment" },
+      { question: "What is the correct file extension for Python files?", options: [".pt", ".pyth", ".pyt", ".py"], answer: ".py" },
+      { question: "Which operator is used for multiplication?", options: ["x", "*", "%", "^"], answer: "*" },
+      { question: "How do you create a variable with the numeric value 5?", options: ["x = int(5)", "x = 5", "Both", "None"], answer: "Both" },
+      { question: "What is the correct syntax to output 'Hello World' in Python?", options: ["echo 'Hello World'", "p('Hello World')", "print('Hello World')", "printf('Hello World')"], answer: "print('Hello World')" },
+      { question: "Which statement is used to stop a loop?", options: ["exit", "stop", "break", "return"], answer: "break" },
+      { question: "What symbol is used for floor division?", options: ["/", "//", "%", "**"], answer: "//" },
+      { question: "Which of the following is a mutable data type?", options: ["tuple", "string", "list", "int"], answer: "list" },
+      { question: "How to check data type of a variable x?", options: ["type(x)", "typeof(x)", "checktype(x)", "datatype(x)"], answer: "type(x)" },
+      { question: "How to start an if statement?", options: ["if x > y then:", "if x > y:", "if x > y then", "if (x > y)"], answer: "if x > y:" },
+      { question: "Which is the correct way to write a function?", options: ["function myfunc():", "def myfunc():", "func myfunc():", "define myfunc():"], answer: "def myfunc():" },
+      { question: "How to create a list?", options: ["list = []", "list = ()", "list = {}", "list = <>"], answer: "list = []" },
+      { question: "Which keyword is used to create a class?", options: ["class", "Class", "def", "object"], answer: "class" },
+      { question: "Which is a tuple?", options: ["[1,2,3]", "(1,2,3)", "{1,2,3}", "<1,2,3>"], answer: "(1,2,3)" },
+      { question: "What does len() do?", options: ["Returns length", "Returns last element", "Returns largest number", "Returns lowest number"], answer: "Returns length" },
+      { question: "How do you start a while loop?", options: ["while x > 5:", "while (x > 5)", "while x > 5 then:", "while x > 5 do"], answer: "while x > 5:" },
+      { question: "How to import a module named 'math'?", options: ["import math", "include math", "using math", "require math"], answer: "import math" }
+    ],
+    Intermediate: [
+      { question: "What is list comprehension?", options: ["Creating lists using loops", "Using a function to create list", "A method to copy list", "None"], answer: "Creating lists using loops" },
+      { question: "Which data type is immutable?", options: ["list", "dictionary", "set", "tuple"], answer: "tuple" },
+      { question: "What will 'print(2 ** 3)' output?", options: ["6", "8", "9", "None"], answer: "8" },
+      { question: "How do you handle exceptions?", options: ["try/except", "catch", "handle", "error"], answer: "try/except" },
+      { question: "What does 'pass' keyword do?", options: ["Exits loop", "Does nothing", "Returns value", "Starts loop"], answer: "Does nothing" },
+      { question: "What is a lambda function?", options: ["Anonymous function", "Function with no parameters", "Function returning None", "Recursive function"], answer: "Anonymous function" },
+      { question: "What is the output of 'bool([])'?", options: ["True", "False", "Error", "None"], answer: "False" },
+      { question: "Which method adds an element at the end of a list?", options: ["append()", "add()", "insert()", "extend()"], answer: "append()" },
+      { question: "What is the output of 'print('Hello' * 3)'?", options: ["HelloHelloHello", "Hello3", "Error", "None"], answer: "HelloHelloHello" },
+      { question: "How to open a file for writing?", options: ["open('file.txt', 'w')", "open('file.txt', 'r')", "open('file.txt', 'a')", "open('file.txt')"], answer: "open('file.txt', 'w')" },
+      { question: "What is the purpose of 'with' statement?", options: ["Handle exceptions", "Open file safely", "Define function", "Start loop"], answer: "Open file safely" },
+      { question: "How do you create a dictionary?", options: ["{}", "[]", "()", "<>"], answer: "{}" },
+      { question: "What does the 'yield' keyword do?", options: ["Returns generator", "Returns value", "Exits function", "Starts loop"], answer: "Returns generator" },
+      { question: "How to convert string '123' to integer?", options: ["int('123')", "str('123')", "float('123')", "convert('123')"], answer: "int('123')" },
+      { question: "Which method removes last element of a list?", options: ["pop()", "remove()", "delete()", "discard()"], answer: "pop()" },
+      { question: "What does 'is' operator check?", options: ["Equality", "Identity", "Membership", "None"], answer: "Identity" },
+      { question: "How to check if 'a' is in list?", options: ["'a' in list", "'a' inside list", "list.has('a')", "list.contains('a')"], answer: "'a' in list" },
+      { question: "What is a decorator?", options: ["Function that modifies another function", "Loop", "Class", "Variable"], answer: "Function that modifies another function" },
+      { question: "What is the result of 'set([1,2,2,3])'?", options: ["{1,2,3}", "[1,2,2,3]", "(1,2,3)", "{1,2,2,3}"], answer: "{1,2,3}" },
+      { question: "Which of these converts list to tuple?", options: ["tuple()", "list()", "set()", "dict()"], answer: "tuple()" }
+    ],
+    Advanced: [
+      { question: "What does GIL stand for in Python?", options: ["Global Interpreter Lock", "Generalized Interface Library", "Global Indexed List", "Garbage Indexed Lock"], answer: "Global Interpreter Lock" },
+      { question: "What is metaclass in Python?", options: ["Class of a class", "Decorator", "Function", "Variable"], answer: "Class of a class" },
+      { question: "What does 'async' keyword indicate?", options: ["Asynchronous function", "Synchronous function", "Static method", "Class method"], answer: "Asynchronous function" },
+      { question: "What is the output of 'list(map(lambda x: x*2, [1,2,3]))'?", options: ["[2,4,6]", "[1,2,3]", "[3,6,9]", "Error"], answer: "[2,4,6]" },
+      { question: "Which module is used for regular expressions?", options: ["re", "regex", "expr", "reg"], answer: "re" },
+      { question: "What does 'property' decorator do?", options: ["Create getter/setter", "Define function", "Create class", "Start loop"], answer: "Create getter/setter" },
+      { question: "What is the purpose of 'super()'?", options: ["Call parent class method", "Call current method", "Create object", "Delete object"], answer: "Call parent class method" },
+      { question: "What is the output of 'print([i for i in range(3)])'?", options: ["[0,1,2]", "[1,2,3]", "(0,1,2)", "[0,1,2,3]"], answer: "[0,1,2]" },
+      { question: "Which of these is used to create a coroutine?", options: ["async def", "def", "lambda", "yield"], answer: "async def" },
+      { question: "What does 'del' keyword do?", options: ["Deletes variable", "Defines variable", "Calls function", "Creates class"], answer: "Deletes variable" },
+      { question: "How to catch multiple exceptions?", options: ["except (TypeError, ValueError):", "except TypeError, ValueError:", "catch TypeError, ValueError", "try except multiple"], answer: "except (TypeError, ValueError):" },
+      { question: "What is the output of 'bool(None)'?", options: ["False", "True", "None", "Error"], answer: "False" },
+      { question: "Which function is used to get all attributes of an object?", options: ["dir()", "attr()", "getattr()", "setattr()"], answer: "dir()" },
+      { question: "What does the 'with' statement guarantee?", options: ["Resource release", "Function call", "Class definition", "Loop execution"], answer: "Resource release" },
+      { question: "Which built-in function returns an iterator?", options: ["iter()", "next()", "list()", "dict()"], answer: "iter()" },
+      { question: "What is the output of 'sorted({3: 'a', 1: 'b', 2: 'c'})'?", options: ["[1,2,3]", "[3,1,2]", "[a,b,c]", "Error"], answer: "[1,2,3]" },
+      { question: "What is the purpose of 'functools' module?", options: ["Higher-order functions", "Math functions", "File functions", "OS functions"], answer: "Higher-order functions" },
+      { question: "What is a generator?", options: ["Function that yields", "Function that returns", "Class", "Variable"], answer: "Function that yields" },
+      { question: "Which of these is not a Python data structure?", options: ["list", "array", "tuple", "dictionary"], answer: "array" },
+      { question: "Which is true about Python's memory management?", options: ["Uses reference counting", "Manual memory management", "No garbage collector", "Uses pointers"], answer: "Uses reference counting" }
+    ]
+  },
+  Java: {
+    Beginner: [
+      { question: "Which keyword is used to define a class in Java?", options: ["class", "Class", "define", "struct"], answer: "class" },
+      { question: "What is the extension of Java bytecode files?", options: [".java", ".class", ".byte", ".exe"], answer: ".class" },
+      { question: "What is JVM?", options: ["Java Virtual Machine", "Java Visual Machine", "Java Variable Method", "Java Version Manager"], answer: "Java Virtual Machine" },
+      { question: "Which of these is NOT a Java data type?", options: ["int", "float", "boolean", "real"], answer: "real" },
+      { question: "Which method is the entry point of a Java program?", options: ["main()", "start()", "init()", "run()"], answer: "main()" },
+      { question: "How do you print in Java?", options: ["System.out.println()", "print()", "echo()", "console.log()"], answer: "System.out.println()" },
+      { question: "Which symbol is used for single line comments?", options: ["//", "/*", "#", "<!--"], answer: "//" },
+      { question: "Which access modifier makes a member accessible everywhere?", options: ["public", "private", "protected", "default"], answer: "public" },
+      { question: "What is the default value of int variables?", options: ["0", "null", "1", "undefined"], answer: "0" },
+      { question: "Which keyword is used to create an object?", options: ["new", "create", "make", "object"], answer: "new" },
+      { question: "How to declare a constant?", options: ["final", "const", "static", "immutable"], answer: "final" },
+      { question: "Which of these loops exists in Java?", options: ["for", "foreach", "do-while", "All of these"], answer: "All of these" },
+      { question: "What is the superclass of all classes in Java?", options: ["Object", "Class", "Main", "Root"], answer: "Object" },
+      { question: "Which package contains Scanner class?", options: ["java.util", "java.io", "java.lang", "java.net"], answer: "java.util" },
+      { question: "How to import a package?", options: ["import package.name;", "include package;", "using package;", "require package;"], answer: "import package.name;" },
+      { question: "What is the correct syntax for main method?", options: ["public static void main(String[] args)", "public void main(String args[])", "static public void main(String args)", "public static void main()"], answer: "public static void main(String[] args)" },
+      { question: "Which of these is a primitive data type?", options: ["int", "String", "Array", "Class"], answer: "int" },
+      { question: "Which statement terminates a loop?", options: ["break", "stop", "exit", "return"], answer: "break" },
+      { question: "What does 'System.out.print' do?", options: ["Prints text without newline", "Prints text with newline", "Stops program", "Returns output"], answer: "Prints text without newline" },
+      { question: "Which operator is used for equality check?", options: ["==", "=", "===", "!="], answer: "==" }
+    ],
+        Intermediate: [
+      { question: "What is polymorphism?", options: ["Many forms", "One form", "Inheritance", "Encapsulation"], answer: "Many forms" },
+      { question: "Which keyword is used to implement an interface?", options: ["implements", "extends", "inherits", "interface"], answer: "implements" },
+      { question: "What does 'static' keyword mean?", options: ["Belongs to class", "Belongs to object", "Variable", "Function"], answer: "Belongs to class" },
+      { question: "What is the purpose of 'final' keyword?", options: ["Constant variable or method override prevention", "Static variable", "Loop control", "Error handling"], answer: "Constant variable or method override prevention" },
+      { question: "What is an abstract class?", options: ["Class that cannot be instantiated", "Class with no methods", "Class with only private members", "Class used for exceptions"], answer: "Class that cannot be instantiated" },
+      { question: "What is the use of 'this' keyword?", options: ["Refers to current object", "Refers to parent class", "Calls a method", "Creates new object"], answer: "Refers to current object" },
+      { question: "Which method is used to start a thread?", options: ["start()", "run()", "init()", "begin()"], answer: "start()" },
+      { question: "What is the output of 'System.out.println(10 + 20 + \"30\")'?", options: ["3030", "102030", "3030", "3030"], answer: "3030" },
+      { question: "What exception is thrown when accessing an invalid array index?", options: ["ArrayIndexOutOfBoundsException", "NullPointerException", "IOException", "NumberFormatException"], answer: "ArrayIndexOutOfBoundsException" },
+      { question: "What is synchronization in Java?", options: ["Controlling thread access to shared resources", "Data encryption", "Variable declaration", "Exception handling"], answer: "Controlling thread access to shared resources" },
+      { question: "What is the use of 'super' keyword?", options: ["Access parent class members", "Access current class members", "Call static methods", "Create new objects"], answer: "Access parent class members" },
+      { question: "What is method overloading?", options: ["Same method name with different parameters", "Different method names", "Same method name with same parameters", "None"], answer: "Same method name with different parameters" },
+      { question: "Which collection class allows duplicate elements?", options: ["List", "Set", "Map", "Queue"], answer: "List" },
+      { question: "Which interface is implemented for threads?", options: ["Runnable", "Callable", "Thread", "Executor"], answer: "Runnable" },
+      { question: "Which of these is NOT a wrapper class?", options: ["Integer", "Double", "Float", "Number"], answer: "Number" },
+      { question: "What is the parent class of all exceptions?", options: ["Throwable", "Exception", "Error", "RuntimeException"], answer: "Throwable" },
+      { question: "What is the output of 'System.out.println(5 / 2)'?", options: ["2", "2.5", "3", "Error"], answer: "2" },
+      { question: "Which keyword is used to create a thread-safe singleton?", options: ["synchronized", "volatile", "static", "final"], answer: "synchronized" },
+      { question: "Which statement is used to handle exceptions?", options: ["try/catch", "handle/except", "error/catch", "try/handle"], answer: "try/catch" },
+      { question: "Which method converts string to integer?", options: ["Integer.parseInt()", "String.toInt()", "Integer.valueOf()", "String.parseInt()"], answer: "Integer.parseInt()" }
+    ],
+    Advanced: [
+      { question: "What is the difference between Checked and Unchecked exceptions?", options: ["Checked are checked at compile time", "Unchecked are checked at compile time", "No difference", "Checked are runtime exceptions"], answer: "Checked are checked at compile time" },
+      { question: "What is Java Stream API used for?", options: ["Functional-style operations on collections", "I/O operations", "Thread management", "Database connections"], answer: "Functional-style operations on collections" },
+      { question: "What is the use of volatile keyword?", options: ["Ensures visibility of changes across threads", "Declares constant", "Prevents inheritance", "Declares static variable"], answer: "Ensures visibility of changes across threads" },
+      { question: "What is a lambda expression?", options: ["Anonymous function", "Class", "Interface", "Exception"], answer: "Anonymous function" },
+      { question: "What is the purpose of Optional class?", options: ["Handle null values safely", "Exception handling", "Create objects", "Thread synchronization"], answer: "Handle null values safely" },
+      { question: "Which annotation is used to suppress warnings?", options: ["@SuppressWarnings", "@Override", "@Deprecated", "@SafeVarargs"], answer: "@SuppressWarnings" },
+      { question: "What does the 'finalize()' method do?", options: ["Called by garbage collector before object destruction", "Initializes object", "Handles exceptions", "Overrides method"], answer: "Called by garbage collector before object destruction" },
+      { question: "What is the difference between HashMap and Hashtable?", options: ["Hashtable is synchronized", "HashMap is synchronized", "No difference", "Both are synchronized"], answer: "Hashtable is synchronized" },
+      { question: "What is the use of 'transient' keyword?", options: ["Prevents serialization", "Declares constant", "Used for threading", "Overrides method"], answer: "Prevents serialization" },
+      { question: "Which interface is used for object serialization?", options: ["Serializable", "Externalizable", "Cloneable", "Comparable"], answer: "Serializable" },
+      { question: "How to create a thread pool?", options: ["ExecutorService", "ThreadPoolExecutor", "Both", "None"], answer: "Both" },
+      { question: "What is deadlock?", options: ["Two or more threads waiting indefinitely for resources", "A thread sleeping", "A thread terminated", "Garbage collection"], answer: "Two or more threads waiting indefinitely for resources" },
+      { question: "What is the use of 'instanceof' operator?", options: ["Check object type", "Create new object", "Override method", "Declare class"], answer: "Check object type" },
+      { question: "What is a functional interface?", options: ["Interface with one abstract method", "Interface with no methods", "Interface with multiple methods", "Abstract class"], answer: "Interface with one abstract method" },
+      { question: "Which package contains CompletableFuture?", options: ["java.util.concurrent", "java.util", "java.lang", "java.io"], answer: "java.util.concurrent" },
+      { question: "What is the difference between Comparable and Comparator?", options: ["Comparable defines natural ordering", "Comparator defines natural ordering", "Both same", "None"], answer: "Comparable defines natural ordering" },
+      { question: "What does the keyword 'native' indicate?", options: ["Method implemented in platform-dependent code", "Static method", "Abstract method", "Final method"], answer: "Method implemented in platform-dependent code" },
+      { question: "What is the default value of a boolean in Java?", options: ["false", "true", "null", "0"], answer: "false" },
+      { question: "What is the difference between StringBuffer and StringBuilder?", options: ["StringBuffer is synchronized", "StringBuilder is synchronized", "Both synchronized", "Neither synchronized"], answer: "StringBuffer is synchronized" },
+      { question: "Which design pattern does 'Factory' belong to?", options: ["Creational", "Structural", "Behavioral", "Concurrency"], answer: "Creational" }
+    ],
+  },
+  "Data Science":{
+        Beginner: [
+      { question: "What is data science?", options: ["Field of extracting knowledge from data", "Cooking recipes", "Web development", "Game design"], answer: "Field of extracting knowledge from data" },
+      { question: "Which language is most popular for data science?", options: ["Python", "Java", "C++", "HTML"], answer: "Python" },
+      { question: "What is a dataset?", options: ["Collection of data", "Single data point", "Program code", "Website"], answer: "Collection of data" },
+      { question: "Which library is used for data manipulation in Python?", options: ["Pandas", "NumPy", "Matplotlib", "Seaborn"], answer: "Pandas" },
+      { question: "What is the mean?", options: ["Average value", "Middle value", "Most frequent value", "Smallest value"], answer: "Average value" },
+      { question: "What does 'EDA' stand for?", options: ["Exploratory Data Analysis", "Early Data Access", "Electronic Data Application", "Extreme Data Analytics"], answer: "Exploratory Data Analysis" },
+      { question: "Which of these is NOT a data type?", options: ["Integer", "Boolean", "Class", "String"], answer: "Class" },
+      { question: "What is supervised learning?", options: ["Learning with labeled data", "Learning without labels", "Random guessing", "Data cleaning"], answer: "Learning with labeled data" },
+      { question: "Which algorithm is used for classification?", options: ["Logistic Regression", "K-Means", "PCA", "Apriori"], answer: "Logistic Regression" },
+      { question: "What is overfitting?", options: ["Model fits training data too well", "Model fits test data", "Model fits validation data", "Model ignores data"], answer: "Model fits training data too well" },
+      { question: "What is the use of train-test split?", options: ["To evaluate model", "To create model", "To deploy model", "To delete data"], answer: "To evaluate model" },
+      { question: "Which plot shows relationship between two variables?", options: ["Scatter plot", "Histogram", "Bar chart", "Pie chart"], answer: "Scatter plot" },
+      { question: "What is 'NaN'?", options: ["Not a Number", "Negative value", "Null", "Zero"], answer: "Not a Number" },
+      { question: "Which library is used for plotting in Python?", options: ["Matplotlib", "Pandas", "NumPy", "Scikit-learn"], answer: "Matplotlib" },
+      { question: "What is the output of classification?", options: ["Discrete labels", "Continuous values", "Both", "None"], answer: "Discrete labels" },
+      { question: "Which algorithm is used for clustering?", options: ["K-Means", "Linear Regression", "Decision Tree", "SVM"], answer: "K-Means" },
+      { question: "What is feature scaling?", options: ["Normalizing data", "Deleting features", "Adding new features", "Encoding data"], answer: "Normalizing data" },
+      { question: "What is correlation?", options: ["Relationship between variables", "Data duplication", "Data loss", "Error rate"], answer: "Relationship between variables" },
+      { question: "Which metric is used for regression evaluation?", options: ["Mean Squared Error", "Accuracy", "Precision", "Recall"], answer: "Mean Squared Error" },
+      { question: "What does 'PCA' stand for?", options: ["Principal Component Analysis", "Primary Component Analysis", "Principal Clustering Algorithm", "Primary Classification Analysis"], answer: "Principal Component Analysis" }
+    ],
+    Intermediate: [
+      { question: "What is regularization in machine learning?", options: ["Technique to reduce overfitting", "Increase model complexity", "Data cleaning", "Feature selection"], answer: "Technique to reduce overfitting" },
+      { question: "Which algorithm is used for dimensionality reduction?", options: ["PCA", "Random Forest", "KNN", "Naive Bayes"], answer: "PCA" },
+      { question: "What is cross-validation?", options: ["Method to assess model performance", "Data splitting", "Model training", "Data visualization"], answer: "Method to assess model performance" },
+      { question: "What does ROC curve represent?", options: ["True positive rate vs false positive rate", "Accuracy vs loss", "Precision vs recall", "Error rate vs epoch"], answer: "True positive rate vs false positive rate" },
+      { question: "What is a confusion matrix?", options: ["Table to evaluate classification results", "Data matrix", "Feature matrix", "Model summary"], answer: "Table to evaluate classification results" },
+      { question: "What is ensemble learning?", options: ["Combining multiple models", "Single model training", "Feature engineering", "Data augmentation"], answer: "Combining multiple models" },
+      { question: "Which of these is a boosting algorithm?", options: ["AdaBoost", "K-Means", "PCA", "SVM"], answer: "AdaBoost" },
+      { question: "What is the use of gradient descent?", options: ["Optimize model parameters", "Create data", "Clean data", "Select features"], answer: "Optimize model parameters" },
+      { question: "What is the purpose of a learning rate?", options: ["Step size in optimization", "Feature scaling", "Model evaluation", "Data sampling"], answer: "Step size in optimization" },
+      { question: "What is the difference between bagging and boosting?", options: ["Bagging reduces variance, boosting reduces bias", "Bagging reduces bias, boosting reduces variance", "Both same", "None"], answer: "Bagging reduces variance, boosting reduces bias" },
+      { question: "Which metric is best for imbalanced classification?", options: ["F1 Score", "Accuracy", "Mean Squared Error", "R2 Score"], answer: "F1 Score" },
+      { question: "What is a hyperparameter?", options: ["Parameter set before training", "Model weight", "Output value", "Feature"], answer: "Parameter set before training" },
+      { question: "Which Python library is used for machine learning?", options: ["Scikit-learn", "Pandas", "Matplotlib", "NumPy"], answer: "Scikit-learn" },
+      { question: "What does 'underfitting' mean?", options: ["Model too simple to capture data", "Model too complex", "Model fits training data perfectly", "Data error"], answer: "Model too simple to capture data" },
+      { question: "What is the kernel trick used for?", options: ["Transform data to higher dimension", "Reduce data size", "Feature scaling", "Normalize data"], answer: "Transform data to higher dimension" },
+      { question: "Which algorithm is used for regression?", options: ["Linear Regression", "K-Means", "Naive Bayes", "Decision Tree Classifier"], answer: "Linear Regression" },
+      { question: "What is the purpose of feature engineering?", options: ["Improve model performance", "Reduce data size", "Clean data", "Train model"], answer: "Improve model performance" },
+      { question: "Which metric measures average error magnitude?", options: ["Mean Absolute Error", "Accuracy", "Precision", "Recall"], answer: "Mean Absolute Error" },
+      { question: "What is the bias-variance tradeoff?", options: ["Balance between underfitting and overfitting", "Model accuracy", "Data quality", "Training speed"], answer: "Balance between underfitting and overfitting" },
+      { question: "What does 'clustering' do?", options: ["Group similar data points", "Classify data", "Reduce dimensionality", "Predict outcomes"], answer: "Group similar data points" }
+    ],
+    Advanced: [
+      { question: "What is the difference between L1 and L2 regularization?", options: ["L1 does feature selection, L2 penalizes large weights", "Both same", "L2 does feature selection", "None"], answer: "L1 does feature selection, L2 penalizes large weights" },
+      { question: "What is the curse of dimensionality?", options: ["Problems caused by high-dimensional data", "Model overfitting", "Low data quality", "Underfitting"], answer: "Problems caused by high-dimensional data" },
+      { question: "What is a generative model?", options: ["Model that generates new data", "Model that classifies data", "Model that reduces dimensions", "Model for clustering"], answer: "Model that generates new data" },
+      { question: "What does the term 'stochastic gradient descent' mean?", options: ["Gradient descent using a single sample", "Gradient descent using all samples", "Batch gradient descent", "Momentum method"], answer: "Gradient descent using a single sample" },
+      { question: "Which technique helps to avoid vanishing gradients?", options: ["ReLU activation", "Sigmoid activation", "Tanh activation", "Linear activation"], answer: "ReLU activation" },
+      { question: "What is the main advantage of deep learning over traditional ML?", options: ["Automatic feature extraction", "Faster training", "Less data needed", "Simpler models"], answer: "Automatic feature extraction" },
+      { question: "What is dropout in neural networks?", options: ["Regularization technique to prevent overfitting", "Activation function", "Loss function", "Optimizer"], answer: "Regularization technique to prevent overfitting" },
+      { question: "What is backpropagation used for?", options: ["Training neural networks", "Data preprocessing", "Feature selection", "Model evaluation"], answer: "Training neural networks" },
+      { question: "What is an epoch in neural network training?", options: ["One full pass through the training data", "One batch of data", "One prediction", "One parameter update"], answer: "One full pass through the training data" },
+      { question: "Which optimizer uses adaptive learning rates?", options: ["Adam", "SGD", "Momentum", "RMSprop"], answer: "Adam" },
+      { question: "What is the role of an activation function?", options: ["Introduce non-linearity", "Scale inputs", "Normalize data", "Reduce parameters"], answer: "Introduce non-linearity" },
+      { question: "What is transfer learning?", options: ["Using pre-trained models on new tasks", "Training from scratch", "Data augmentation", "Hyperparameter tuning"], answer: "Using pre-trained models on new tasks" },
+      { question: "What does 'precision' measure?", options: ["Correct positive predictions out of total predicted positives", "Correct positives out of actual positives", "Overall accuracy", "Error rate"], answer: "Correct positive predictions out of total predicted positives" },
+      { question: "What does 'recall' measure?", options: ["Correct positive predictions out of actual positives", "Correct positives out of predicted positives", "Overall accuracy", "Error rate"], answer: "Correct positive predictions out of actual positives" },
+      { question: "What is a confusion matrix used for?", options: ["Evaluate classification model", "Feature extraction", "Data cleaning", "Model training"], answer: "Evaluate classification model" },
+      { question: "What is batch normalization?", options: ["Technique to normalize layer inputs", "Data scaling", "Data splitting", "Loss function"], answer: "Technique to normalize layer inputs" },
+      { question: "What is the vanishing gradient problem?", options: ["Gradients become too small to update weights", "Gradients explode", "Data imbalance", "Model underfitting"], answer: "Gradients become too small to update weights" },
+      { question: "What is reinforcement learning?", options: ["Learning by interacting with environment and receiving rewards", "Supervised learning", "Unsupervised learning", "Dimensionality reduction"], answer: "Learning by interacting with environment and receiving rewards" },
+      { question: "What is a Markov Decision Process (MDP)?", options: ["Mathematical framework for reinforcement learning", "Supervised model", "Clustering technique", "Dimensionality reduction"], answer: "Mathematical framework for reinforcement learning" },
+      { question: "Which metric is best for imbalanced datasets?", options: ["Area Under Precision-Recall Curve", "Accuracy", "Mean Squared Error", "R2 Score"], answer: "Area Under Precision-Recall Curve" }
+    ],
+
+  }
+  };
+  let currentCourse = null;
+  let currentLevel = null;
+  let currentQuiz = [];
+  let currentQuestionIndex = 0;
+  let userAnswers = [];
+
+  const courseSelect = document.getElementById('courseSelect');
+  const levelSelect = document.getElementById('levelSelect');
+  const questionNumber = document.getElementById('questionNumber');
+  const questionText = document.getElementById('questionText');
+  const optionsContainer = document.getElementById('optionsContainer');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const skipBtn = document.getElementById('skipBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const resultContainer = document.getElementById('resultContainer');
+  const scoreText = document.getElementById('scoreText');
+  const performanceMsg = document.getElementById('performanceMsg');
+  const progressCircle = document.getElementById('progressCircle');
+  const quizTitle = document.getElementById('quizTitle');
+
+  // Populate course dropdown on page load
+  function populateCourses() {
+    const courses = Object.keys(quizData);
+    for (const course of courses) {
+      const option = document.createElement('option');
+      option.value = course;
+      option.textContent = course;
+      courseSelect.appendChild(option);
+    }
+  }
+
+  // Populate level dropdown based on selected course
+  function populateLevels(course) {
+    levelSelect.innerHTML = '<option value="" disabled selected>Select Level</option>';
+    if (!course) {
+      levelSelect.disabled = true;
+      return;
+    }
+    const levels = Object.keys(quizData[course]);
+    for (const level of levels) {
+      const option = document.createElement('option');
+      option.value = level;
+      option.textContent = level;
+      levelSelect.appendChild(option);
+    }
+    levelSelect.disabled = false;
+  }
+
+  function resetQuiz() {
+    currentQuestionIndex = 0;
+    userAnswers = [];
+    submitBtn.style.display = 'none';
+    nextBtn.disabled = false;
+    prevBtn.disabled = true;
+    skipBtn.disabled = false;
+    resultContainer.style.display = 'none';
+    questionNumber.style.display = 'block';
+    questionText.style.display = 'block';
+    optionsContainer.style.display = 'flex';
+  }
+
+  function loadQuestion() {
+    if (!currentQuiz.length) return;
+    const q = currentQuiz[currentQuestionIndex];
+    questionNumber.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuiz.length}`;
+    questionText.textContent = q.question;
+
+    optionsContainer.innerHTML = '';
+    q.options.forEach(option => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      div.textContent = option;
+      div.tabIndex = 0;
+
+      // Mark if previously selected
+      if (userAnswers[currentQuestionIndex] === option) {
+        div.classList.add('selected');
+      }
+
+      div.onclick = () => {
+        selectOption(div, option);
+      };
+      div.onkeypress = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          selectOption(div, option);
+          e.preventDefault();
+        }
+      };
+
+      optionsContainer.appendChild(div);
+    });
+
+    prevBtn.disabled = currentQuestionIndex === 0;
+    nextBtn.disabled = currentQuestionIndex === currentQuiz.length - 1;
+    submitBtn.style.display = currentQuestionIndex === currentQuiz.length - 1 ? 'inline-block' : 'none';
+  }
+
+  function selectOption(div, option) {
+    // Remove selection from all options in this question
+    Array.from(optionsContainer.children).forEach(child => child.classList.remove('selected'));
+    div.classList.add('selected');
+    userAnswers[currentQuestionIndex] = option;
+  }
+
+  function nextQuestion() {
+    if (currentQuestionIndex < currentQuiz.length - 1) {
+      currentQuestionIndex++;
+      loadQuestion();
+    }
+  }
+
+  function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+      currentQuestionIndex--;
+      loadQuestion();
+    }
+  }
+
+  function skipQuestion() {
+    userAnswers[currentQuestionIndex] = null;
+    nextQuestion();
+  }
+
+  function calculateScore() {
+    let score = 0;
+    currentQuiz.forEach((q, i) => {
+      if (userAnswers[i] === q.answer) score++;
+    });
+    return score;
+  }
+
+  function showResult() {
+    const score = calculateScore();
+    const total = currentQuiz.length;
+    const percent = Math.round((score / total) * 100);
+
+    // Hide quiz elements
+    questionNumber.style.display = 'none';
+    questionText.style.display = 'none';
+    optionsContainer.style.display = 'none';
+    prevBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    skipBtn.style.display = 'none';
+    submitBtn.style.display = 'none';
+
+    // Show result container
+    resultContainer.style.display = 'block';
+    scoreText.textContent = `${percent}%`;
+
+    // Animate circle progress
+    const circumference = 2 * Math.PI * 60;
+    let offset = circumference - (percent / 100) * circumference;
+    progressCircle.style.strokeDashoffset = offset;
+
+    // Performance message
+    let msg = '';
+    if (percent >= 90) {
+      msg = 'Excellent!';
+    } else if (percent >= 70) {
+      msg = 'Good job!';
+    } else if (percent >= 50) {
+      msg = 'Fair, keep practicing!';
+    } else {
+      msg = 'Needs improvement!';
+    }
+    performanceMsg.textContent = msg;
+  }
+
+  function retryQuiz() {
+    resetQuiz();
+    loadQuestion();
+    prevBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'inline-block';
+    skipBtn.style.display = 'inline-block';
+  }
+
+  function goDashboard() {
+    // For demo purposes, just reload page to reset quiz
+    location.reload();
+  }
+
+    courseSelect.addEventListener('change', () => {
+    currentCourse = courseSelect.value;
+    currentLevel = null;
+    levelSelect.value = '';
+    populateLevels(currentCourse);
+    questionNumber.textContent = '';
+    questionText.textContent = 'Please select level to start.';
+    optionsContainer.innerHTML = '';
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    skipBtn.disabled = true;
+    submitBtn.style.display = 'none';
+    resultContainer.style.display = 'none';
+    quizTitle.textContent = `Quiz: ${currentCourse}`;
+
+    courseSelect.style.display = 'inline-block';
+  levelSelect.style.display = 'inline-block';
+  });
+
+  levelSelect.addEventListener('change', () => {
+    currentLevel = levelSelect.value;
+    if (currentCourse && currentLevel) {
+      currentQuiz = quizData[currentCourse][currentLevel];
+      resetQuiz();
+      loadQuestion();
+      quizTitle.textContent = `Quiz: ${currentCourse} - ${currentLevel}`;
+
+       courseSelect.style.display = 'none';
+    levelSelect.style.display = 'none';
+    }
+  });
+
+  prevBtn.addEventListener('click', prevQuestion);
+  nextBtn.addEventListener('click', nextQuestion);
+  skipBtn.addEventListener('click', skipQuestion);
+  submitBtn.addEventListener('click', showResult);
+
+  // Initialize course selector on page load
+  populateCourses();
+
+
+</script>
+
+</body>
+</html>

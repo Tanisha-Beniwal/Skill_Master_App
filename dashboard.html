@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skill Master - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+    .sidebar {
+      width: 280px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.3);
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.4s ease;
+      user-select: none;
+      position: relative;
+    }
+    .sidebar-header {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+      letter-spacing: 1.5px;
+      white-space: nowrap;
+      text-align: center;
+      user-select: none;
+    }
+    .profile-section {
+      margin-bottom: 40px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .profile-pic {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid #a7b4ff;
+      margin: 0 auto 15px auto;
+      background: url('') center/cover no-repeat;
+      transition: transform 0.3s ease;
+    }
+    .profile-name {
+      font-weight: 600;
+      font-size: 1.2rem;
+      user-select: none;
+    }
+    .dropdown-arrow {
+      display: inline-block;
+      margin-left: 6px;
+      border: solid #c7d2fe;
+      border-width: 0 2px 2px 0;
+      padding: 4px;
+      transform: rotate(45deg);
+      transition: transform 0.3s ease;
+    }
+    .dropdown-arrow.open {
+      transform: rotate(-135deg);
+    }
+    .dropdown-menu {
+      margin-top: 15px;
+      background: rgba(167, 180, 255, 0.2);
+      border-radius: 15px;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+      user-select: none;
+    }
+    .dropdown-menu.open {
+      max-height: 320px;
+      padding: 10px 0;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 12px 25px;
+      color: #c7d2fe;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .dropdown-menu a:hover {
+      background: rgba(167, 180, 255, 0.4);
+      color: #1a1a1a;
+      font-weight: 700;
+    }
+    .main-content {
+      flex-grow: 1;
+      padding: 40px 60px;
+      overflow-y: auto;
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 2.8rem;
+      font-weight: 700;
+      user-select: none;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .cards {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .card, .course-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border-radius: 25px;
+      width: 280px;
+      padding: 40px 30px;
+      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.6);
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+      color: #fff;
+    }
+    .card:hover, .course-card:hover {
+      transform: translateY(-15px) scale(1.05);
+      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.85);
+      color: #222;
+      background: #a7b4ff;
+    }
+    .card h2, .course-card h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      user-select: none;
+    }
+    .card p, .course-card p {
+      margin: 0;
+      font-weight: 500;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #a7b4ff;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    @media (max-width: 900px) {
+      .main-content {
+        padding: 30px 20px;
+      }
+      .cards {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Only the modified parts are shown for brevity -->
+
+<!-- Sidebar section (revised) -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">Skill Master</div>
+  <div class="profile-section" id="profileSection">
+    <div class="profile-pic" id="sidebarPic"></div>
+    <div>
+      <span class="profile-name" id="profileName">Username</span>
+      <span class="dropdown-arrow" id="dropdownArrow"></span>
+    </div>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <a onclick="showMyAccount()">My Account</a>
+      <a onclick="showAttendance()">Attendance</a>
+      <a onclick="logout()">Logout</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main content section (updated cards - Attendance removed) -->
+<div class="main-content" id="mainContent">
+  <h1>Welcome to your Dashboard</h1>
+  <div class="cards">
+    <div class="card" onclick="showCourses()">
+      <h2>Courses</h2>
+      <p>Explore and start learning</p>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript section updates -->
+<script>
+  const username = localStorage.getItem('username') || 'User';
+  document.getElementById('profileName').textContent = username;
+
+  const profileSection = document.getElementById('profileSection');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  const dropdownArrow = document.getElementById('dropdownArrow');
+
+  profileSection.addEventListener('click', () => {
+    dropdownMenu.classList.toggle('open');
+    dropdownArrow.classList.toggle('open');
+  });
+
+  const mainContent = document.getElementById('mainContent');
+  const sidebarPic = document.getElementById('sidebarPic');
+
+  function showCourses() {
+  mainContent.innerHTML = `
+    <h1>Available Courses</h1>
+    <div class="cards">
+      <div class="course-card" onclick="goToModules('python')">
+        <h2>Python</h2>
+        <p>Learn Python programming from basics to advanced.</p>
+      </div>
+      <div class="course-card" onclick="goToModules('mern')">
+        <h2>MERN Stack</h2>
+        <p>Master MongoDB, Express, React, and Node.js.</p>
+      </div>
+      <div class="course-card" onclick="goToModules('java')">
+        <h2>Java</h2>
+        <p>Learn Java programming and OOP concepts thoroughly.</p>
+      </div>
+      <div class="course-card" onclick="goToModules('datascience')">
+        <h2>Data Science</h2>
+        <p>Explore data analysis, visualization, and machine learning.</p>
+      </div>
+    </div>
+  `;
+}
+
+  function showMyAccount() {
+    mainContent.innerHTML = `
+      <h1>My Account</h1>
+      <form id="profileForm" style="max-width: 500px; margin-top: 20px;">
+        <label>Full Name</label><br>
+        <input type="text" placeholder="Enter your full name" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:none;"/><br>
+        <label>Email</label><br>
+        <input type="email" placeholder="Enter your email" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:none;"/><br>
+        <label>Password</label><br>
+        <input type="password" placeholder="Enter new password" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:none;"/><br>
+        <label>Profile Picture</label><br>
+        <input type="file" id="profileImageInput" accept="image/*" style="margin-bottom:15px;"><br>
+        <img id="profilePreview" src="" alt="Preview" style="width:100px; height:100px; border-radius:50%; margin-bottom:15px; display:none;"><br>
+        <button type="submit" style="padding:10px 20px; border:none; background:#a7b4ff; color:#000; font-weight:bold; border-radius:10px; cursor:pointer;">Update Profile</button>
+      </form>
+    `;
+
+    document.getElementById('profileImageInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('profilePreview').src = e.target.result;
+          document.getElementById('profilePreview').style.display = 'block';
+          localStorage.setItem('profileImage', e.target.result);
+          sidebarPic.style.backgroundImage = `url(${e.target.result})`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  function showAttendance() {
+    window.location.href = 'attendance.html';
+  }
+
+  function goToModules(course) {
+    window.location.href = 'modules.html?course=' + encodeURIComponent(course);
+  }
+
+  function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+  }
+
+  // Load profile picture if saved
+  const savedImage = localStorage.getItem('profileImage');
+  if (savedImage) {
+    sidebarPic.style.backgroundImage = `url(${savedImage})`;
+  }
+</script>

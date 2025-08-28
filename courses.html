@@ -1,0 +1,80 @@
+<!-- Save this as courses.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skill Master - Courses</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    .courses {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .course-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border-radius: 25px;
+      width: 280px;
+      padding: 40px 30px;
+      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.6);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .course-card:hover {
+      transform: translateY(-15px) scale(1.05);
+      background: #a7b4ff;
+      color: #222;
+    }
+    .course-card h2 {
+      margin: 0 0 10px;
+      font-size: 1.8rem;
+    }
+    .course-card p {
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Select a Course</h1>
+  <div class="courses">
+    <div class="course-card" onclick="goToModules('python')">
+      <h2>Python</h2>
+      <p>Learn Python from basics to advanced level.</p>
+    </div>
+    <div class="course-card" onclick="goToModules('mern')">
+      <h2>MERN Stack</h2>
+      <p>Master MongoDB, Express, React, and Node.js.</p>
+    </div>
+    <div class="course-card" onclick="goToModules('java')">
+      <h2>Java</h2>
+      <p>Comprehensive Java programming and OOP concepts.</p>
+    </div>
+    <div class="course-card" onclick="goToModules('datascience')">
+      <h2>Data Science</h2>
+      <p>Explore data analysis, visualization, and ML basics.</p>
+    </div>
+  </div>
+
+  <script>
+    function goToModules(course) {
+      window.location.href = `modules.html?course=${course}`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skill Master - Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      animation: float 6s ease-in-out infinite;
+      filter: blur(15px);
+    }
+    .circle:nth-child(1) {
+      width: 300px; height: 300px;
+      top: 10%;
+      left: 15%;
+      animation-delay: 0s;
+    }
+    .circle:nth-child(2) {
+      width: 200px; height: 200px;
+      bottom: 15%;
+      right: 20%;
+      animation-delay: 2s;
+    }
+    .circle:nth-child(3) {
+      width: 250px; height: 250px;
+      top: 40%;
+      right: 10%;
+      animation-delay: 4s;
+    }
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+      }
+      50% {
+        transform: translateY(-20px) translateX(10px);
+      }
+    }
+    .signup-box {
+      position: relative;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      padding: 40px 50px;
+      width: 350px;
+      text-align: center;
+      color: white;
+      z-index: 10;
+      animation: fadeIn 1s ease forwards;
+    }
+    .signup-box h1 {
+      margin-bottom: 30px;
+      font-weight: 600;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+    }
+    input {
+      width: 100%;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 30px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #333;
+      transition: 0.3s;
+      box-shadow: inset 0 0 8px rgba(255,255,255,0.5);
+    }
+    input::placeholder {
+      color: #666;
+    }
+    input:focus {
+      box-shadow: 0 0 10px #667eea;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 15px;
+      border-radius: 30px;
+      border: none;
+      background: #667eea;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      box-shadow: 0 5px 15px rgba(102,126,234,0.6);
+    }
+    button:hover {
+      background: #5a67d8;
+      box-shadow: 0 8px 20px rgba(90,103,216,0.8);
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+    .footer a {
+      color: #f3e8ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+
+  <div class="signup-box">
+    <h1>Create Account</h1>
+    <input type="text" id="username" placeholder="Username" autocomplete="off" />
+    <input type="email" id="email" placeholder="Email" autocomplete="off" />
+    <input type="password" id="password" placeholder="Password" autocomplete="off" />
+    <input type="password" id="confirm-password" placeholder="Confirm Password" autocomplete="off" />
+    <button onclick="signup()">Sign Up</button>
+    <p class="footer">Already have an account? <a href="index.html">Login</a></p>
+  </div>
+
+  <script>
+    function signup() {
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const confirmPassword = document.getElementById('confirm-password').value.trim();
+
+      if (!username || !email || !password || !confirmPassword) {
+        alert('Please fill all the fields.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+
+      // For demo, save username and email to localStorage (mock)
+      localStorage.setItem('username', username);
+      localStorage.setItem('email', email);
+      alert('Account created successfully!');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skill Master - Welcome</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      overflow: hidden;
+    }
+    .container {
+      text-align: center;
+      background: rgba(255,255,255,0.15);
+      padding: 50px 60px;
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      animation: fadeInScale 1.2s ease forwards;
+      max-width: 400px;
+      user-select: none;
+    }
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+      animation: slideIn 1s ease forwards;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      color: #ddd;
+    }
+    button {
+      background: #667eea;
+      border: none;
+      border-radius: 30px;
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(102,126,234,0.6);
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #5a67d8;
+      box-shadow: 0 8px 20px rgba(90,103,216,0.8);
+    }
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="greeting">Welcome</h1>
+    <p>Ready to master new skills? Let's get started.</p>
+    <button id="nextBtn">Next</button>
+  </div>
+
+  <script>
+    // Retrieve username from localStorage
+    const username = localStorage.getItem('username') || 'User';
+    document.getElementById('greeting').textContent = `Welcome, ${username}!`;
+
+    // On clicking next, go to dashboard page
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>

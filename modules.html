@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skill Master - Modules</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+      user-select: none;
+    }
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+    }
+    p.course-name {
+      font-size: 1.3rem;
+      margin-bottom: 50px;
+      opacity: 0.85;
+      user-select: none;
+    }
+    .levels-container {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      width: 100%;
+    }
+    .level-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 25px;
+      width: 250px;
+      padding: 25px 15px 15px 15px;
+      box-shadow: 0 10px 30px rgba(67, 206, 162, 0.6);
+      text-align: center;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      user-select: none;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.3rem;
+      box-shadow: 0 8px 30px rgba(24, 90, 157, 0.6);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .level-card:hover {
+      transform: translateY(-15px) scale(1.05);
+      box-shadow: 0 18px 50px rgba(24, 90, 157, 0.85);
+      color: #185a9d;
+      background: #a6f1e0;
+      font-weight: 700;
+    }
+    .btn-group {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn {
+      background: #fff;
+      color: #185a9d;
+      border-radius: 25px;
+      border: none;
+      padding: 8px 15px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+      flex: 1;
+      user-select: none;
+    }
+    .btn:hover {
+      background: #185a9d;
+      color: #a6f1e0;
+    }
+    .back-btn {
+      margin-top: 40px;
+      font-size: 1.1rem;
+      color: #eee;
+      cursor: pointer;
+      border: 2px solid #eee;
+      border-radius: 25px;
+      padding: 10px 25px;
+      background: transparent;
+      transition: background 0.3s ease, color 0.3s ease;
+      user-select: none;
+      width: 130px;
+      text-align: center;
+      align-self: center;
+    }
+    .back-btn:hover {
+      background: #eee;
+      color: #185a9d;
+      font-weight: 700;
+    }
+    /* Video Player Section */
+    #videoSection {
+      width: 80%;
+      max-width: 900px;
+      margin-top: 40px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 20px;
+      display: none; /* Hidden initially */
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(67, 206, 162, 0.7);
+      user-select: none;
+      color: #185a9d;
+    }
+    #videoTitle {
+      font-weight: 700;
+      font-size: 1.7rem;
+      margin-bottom: 15px;
+      color: #185a9d;
+    }
+    iframe#videoPlayer {
+      width: 100%;
+      height: 480px;
+      border-radius: 15px;
+      background: #000;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      outline: none;
+      border: none;
+    }
+    .video-list {
+      margin-top: 20px;
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      width: 100%;
+    }
+    .video-thumb {
+      flex: 0 0 140px;
+      background: rgba(24, 90, 157, 0.6);
+      border-radius: 15px;
+      padding: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      text-align: center;
+      color: #fff;
+      font-weight: 600;
+      user-select: none;
+    }
+    .video-thumb:hover, .video-thumb.active {
+      background: #a6f1e0;
+      color: #185a9d;
+      font-weight: 700;
+      transform: scale(1.05);
+    }
+    /* Scrollbar for video list */
+    .video-list::-webkit-scrollbar {
+      height: 8px;
+    }
+    .video-list::-webkit-scrollbar-thumb {
+      background: #185a9d;
+      border-radius: 10px;
+    }
+    .video-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Select Module Level</h1>
+  <p class="course-name" id="courseName">Course: ...</p>
+
+  <div class="levels-container" id="levelsContainer">
+    <!-- Levels will be rendered here -->
+  </div>
+
+  <div id="videoSection">
+    <div id="videoTitle">Video Title</div>
+    <iframe id="videoPlayer" allowfullscreen></iframe>
+    <div class="video-list" id="videoList">
+      <!-- Video thumbnails will be inserted here -->
+    </div>
+  </div>
+
+  <div class="back-btn" onclick="goBack()">← Back to Dashboard</div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const course = params.get('course');
+
+    // Mapping course param to display name
+    const courseMap = {
+      python: 'Python',
+      mern: 'MERN Stack',
+      java: 'Java',
+      datascience: 'Data Science'
+    };
+
+    const courseNameEl = document.getElementById('courseName');
+    if(course && courseMap[course]){
+      courseNameEl.textContent = `Course: ${courseMap[course]}`;
+    } else {
+      courseNameEl.textContent = 'Course: Unknown';
+    }
+
+    const levelsContainer = document.getElementById('levelsContainer');
+    const videoSection = document.getElementById('videoSection');
+    const videoTitle = document.getElementById('videoTitle');
+    const videoPlayer = document.getElementById('videoPlayer');
+    const videoList = document.getElementById('videoList');
+
+    const levels = ['beginner', 'intermediate', 'advanced'];
+
+    // Video URLs for each course and level
+    const videos = {
+      python: {
+        beginner: [
+          { title: 'Python Basics', url: 'https://www.youtube.com/embed/XIR20HH8mNY?si=RXFCVxDkIbn-h_9x' },
+          { title: 'Variables and Data Types', url: 'https://www.youtube.com/embed/a6gjhVtXL_U?si=E3KqMR1fUPIglYGC' },
+          { title: 'Control Structures', url: 'https://www.youtube.com/embed/mzMf3Uo_1Nc?si=UOrp_IfzHdQhGLQX' }
+        ],
+        intermediate: [
+          { title: 'Functions in Python', url: 'https://www.youtube.com/embed/qnGrQ2DsdJU?si=7qmsL3fQ_KN0FybG' },
+          { title: 'Modules and Packages', url: 'https://www.youtube.com/embed/5l_PxMnPtQE?si=amDe4eQ60uwQvG6S' },
+          { title: 'File Handling', url: 'https://www.youtube.com/embed/9DTbm8MArIA?si=QWWRYEnUqBq3bB28' }
+        ],
+        advanced: [
+          { title: 'Decorators', url: 'https://www.youtube.com/embed/FsAPt_9Bf3U?si=imzjO8r_TgqgKpA1' },
+          { title: 'Generators', url: 'https://www.youtube.com/embed/bD05uGo_sVI?si=QstFDNyAcsq03Wkz' },
+          { title: 'Context Managers', url: 'https://www.youtube.com/embed/-aKFBoZpiqA?si=lKjKxq1RwiqGZXOi' }
+        ]
+      },
+      mern: {
+        beginner: [
+          { title: 'Intro to MongoDB', url: 'https://www.youtube.com/embed/Of1slvSiC5M' },
+          { title: 'Node.js Basics', url: 'https://www.youtube.com/embed/TlB_eWDSMt4' },
+          { title: 'Express.js Intro', url: 'https://www.youtube.com/embed/L72fhGm1tfE' }
+        ],
+        intermediate: [
+          { title: 'React Components', url: 'https://www.youtube.com/embed/dGcsHMXbSOA' },
+          { title: 'State & Props', url: 'https://www.youtube.com/embed/35lXWvCuM8o' },
+          { title: 'Routing with React Router', url: 'https://www.youtube.com/embed/Law7wfdg_ls' }
+        ],
+        advanced: [
+          { title: 'Redux Basics', url: 'https://www.youtube.com/embed/93p3LxR9xfM' },
+          { title: 'Authentication', url: 'https://www.youtube.com/embed/6FOq4cUdH8k' },
+          { title: 'Performance Optimization', url: 'https://www.youtube.com/embed/X3qy4zBvOrA' }
+        ]
+      },
+      java: {
+        beginner: [
+          { title: 'Java Basics', url: 'https://www.youtube.com/embed/grEKMHGYyns' },
+          { title: 'Variables and Data Types', url: 'https://www.youtube.com/embed/8cm1x4bC610' },
+          { title: 'Control Statements', url: 'https://www.youtube.com/embed/9Z42XGUZJKw' }
+        ],
+        intermediate: [
+          { title: 'OOP Concepts', url: 'https://www.youtube.com/embed/4cvF_k7eH1M' },
+          { title: 'Inheritance', url: 'https://www.youtube.com/embed/NY6sC8FHQao' },
+          { title: 'Interfaces', url: 'https://www.youtube.com/embed/NsBSp7AjVNs' }
+        ],
+        advanced: [
+          { title: 'Generics', url: 'https://www.youtube.com/embed/NhC5mz6-Qdo' },
+          { title: 'Collections Framework', url: 'https://www.youtube.com/embed/DhwXYsbRMFE' },
+          { title: 'Multithreading', url: 'https://www.youtube.com/embed/SmF48IBovcc' }
+        ]
+      },
+      datascience: {
+        beginner: [
+          { title: 'Introduction to Data Science', url: 'https://www.youtube.com/embed/X3paOmcrTjQ' },
+          { title: 'Python for Data Science', url: 'https://www.youtube.com/embed/r-uOLxNrNk8' },
+          { title: 'Data Visualization Basics', url: 'https://www.youtube.com/embed/0dIjmYNv6Jo' }
+        ],
+        intermediate: [
+          { title: 'Pandas Tutorial', url: 'https://www.youtube.com/embed/vmEHCJofslg' },
+          { title: 'NumPy Basics', url: 'https://www.youtube.com/embed/8Mpc9ukltVA' },
+          { title: 'Statistics for Data Science', url: 'https://www.youtube.com/embed/xxpc-HPKN28' }
+        ],
+        advanced: [
+          { title: 'Machine Learning Intro', url: 'https://www.youtube.com/embed/GwIo3gDZCVQ' },
+          { title: 'Deep Learning Basics', url: 'https://www.youtube.com/embed/aircAruvnKk' },
+          { title: 'Natural Language Processing', url: 'https://www.youtube.com/embed/fOvTtapxa9c' }
+        ]
+      }
+    };
+
+    // Render levels
+    function renderLevels() {
+      levelsContainer.innerHTML = '';
+      levels.forEach(level => {
+        const card = document.createElement('div');
+        card.className = 'level-card';
+        card.innerHTML = `
+          ${capitalize(level)}
+          <div class="btn-group">
+            <button class="btn quiz-btn">Quiz</button>
+            <button class="btn video-btn">Video</button>
+          </div>
+        `;
+
+        // Quiz button click
+        card.querySelector('.quiz-btn').addEventListener('click', () => {
+          if(!course){
+            alert('Course parameter missing in URL!');
+            return;
+          }
+          // Navigate to quiz page with query params
+          window.location.href = `quiz.html?course=${course}&level=${level}`;
+        });
+
+        // Video button click
+        card.querySelector('.video-btn').addEventListener('click', () => {
+          if(!course){
+            alert('Course parameter missing in URL!');
+            return;
+          }
+          showVideos(course, level);
+        });
+
+        levelsContainer.appendChild(card);
+      });
+    }
+
+    // Show videos for selected course & level
+    function showVideos(course, level) {
+      const videoData = videos[course]?.[level];
+      if(!videoData || videoData.length === 0) {
+        alert('No videos found for this course and level.');
+        return;
+      }
+      videoSection.style.display = 'flex';
+      videoTitle.textContent = `${capitalize(courseMap[course])} - ${capitalize(level)} Videos`;
+      videoList.innerHTML = '';
+
+      videoData.forEach((vid, index) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'video-thumb';
+        thumb.textContent = vid.title;
+        if(index === 0) {
+          thumb.classList.add('active');
+          videoPlayer.src = vid.url;
+        }
+        thumb.addEventListener('click', () => {
+          videoPlayer.src = vid.url;
+          document.querySelectorAll('.video-thumb').forEach(t => t.classList.remove('active'));
+          thumb.classList.add('active');
+        });
+        videoList.appendChild(thumb);
+      });
+      // Scroll to video section smoothly
+      videoSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Capitalize first letter
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // Back button function
+    function goBack() {
+      // Update the path to your dashboard URL
+      window.location.href = 'dashboard.html';
+    }
+
+    // Initialize page
+    renderLevels();
+  </script>
+</body>
+</html>

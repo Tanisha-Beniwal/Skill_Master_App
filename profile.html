@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Skill Master - Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .profile-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(31, 38, 135, 0.3);
+            text-align: center;
+            width: 320px;
+            position: relative;
+        }
+        .profile-pic {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: #fff;
+            margin: 0 auto 15px auto;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid #764ba2;
+            transition: transform 0.3s ease;
+        }
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .profile-pic:hover {
+            transform: scale(1.05);
+        }
+        h2 {
+            font-size: 2rem;
+            margin: 10px 0 5px 0;
+        }
+        p {
+            font-size: 1rem;
+            margin: 5px 0 20px 0;
+            opacity: 0.85;
+        }
+        button.btn {
+            background: #fff;
+            color: #764ba2;
+            padding: 10px 22px;
+            border-radius: 25px;
+            margin: 8px 5px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.3s ease, color 0.3s ease;
+            user-select: none;
+            outline: none;
+        }
+        button.btn:hover,
+        button.btn:focus {
+            background: #764ba2;
+            color: #fff;
+            outline: none;
+            filter: none;
+            box-shadow: 0 0 8px #764ba2;
+        }
+        button.btn:active {
+            filter: none;
+            outline: none;
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.65);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            padding: 30px 35px;
+            border-radius: 25px;
+            width: 360px;
+            color: #fff;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(31, 38, 135, 0.6);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.6rem;
+            color: #fff;
+            cursor: pointer;
+            user-select: none;
+            border: none;
+            background: none;
+        }
+        /* Inputs for Edit Profile */
+        .modal-content label {
+            display: block;
+            text-align: left;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .modal-content input[type="text"],
+        .modal-content input[type="email"] {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: none;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            outline: none;
+            color: #764ba2;
+            font-weight: 600;
+        }
+        .modal-content input[type="file"] {
+            margin-bottom: 25px;
+            cursor: pointer;
+            color: #764ba2;
+        }
+        .modal-content button.save-btn {
+            width: 100%;
+            padding: 12px 0;
+            border-radius: 25px;
+            border: none;
+            background: #764ba2;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .modal-content button.save-btn:hover {
+            background: #5a3684;
+        }
+
+        /* Settings toggles */
+        .setting-item {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0;
+            right: 0; bottom: 0;
+            background-color: #ccc;
+            border-radius: 26px;
+            transition: .4s;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+        .toggle-switch input:checked + .slider {
+            background-color: #764ba2;
+        }
+        .toggle-switch input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* About Us team */
+        .team-member {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .team-member img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 2px solid #764ba2;
+            object-fit: cover;
+        }
+        .team-member div {
+            text-align: left;
+        }
+        .team-member div h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .team-member div small {
+            opacity: 0.75;
+            font-size: 0.85rem;
+        }
+        /* Scrollbar for modals */
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background-color: #764ba2;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-pic" id="profilePicContainer" title="Click to change profile picture">
+            <img id="profilePic" src="https://i.pravatar.cc/100" alt="Profile Picture" />
+        </div>
+        <h2 id="username">User Name</h2>
+        <p id="email">user@example.com</p>
+        <button class="btn" onclick="openEditProfile()">Edit Profile</button>
+        <button class="btn" onclick="openSettings()">Settings</button>
+        <button class="btn" onclick="openAboutUs()">About Us</button>
+        <button class="btn" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeEditProfile()">&times;</button>
+            <h3>Edit Profile</h3>
+            <label for="profileImageInput">Profile Picture</label>
+            <input type="file" id="profileImageInput" accept="image/*" />
+            <label for="usernameInput">Name</label>
+            <input type="text" id="usernameInput" placeholder="Enter your name" />
+            <label for="emailInput">Email</label>
+            <input type="email" id="emailInput" placeholder="Enter your email" />
+            <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeSettings()">&times;</button>
+            <h3>Settings</h3>
+            <div class="setting-item">
+                <span>Privacy</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="privacyToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>Notifications</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="notificationsToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>Volume</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="volumeToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Us Modal -->
+    <div class="modal" id="aboutUsModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeAboutUs()">&times;</button>
+            <h3>About Us</h3>
+            <p>
+                <strong>Skill Master</strong> is a smart learning platform dedicated to monitoring classroom sessions 
+                using skill training programs to empower learners and educators alike. We provide interactive courses, quizzes, 
+                and real-time progress tracking to enhance learning outcomes.
+            </p>
+           
+
+    <script>
+        // Disable brightness change on button focus/active
+        document.querySelectorAll('button.btn').forEach(btn => {
+            btn.addEventListener('mousedown', e => e.preventDefault()); // prevents click focus style in some browsers
+        });
+
+        // Edit Profile Modal functions
+        function openEditProfile() {
+            document.getElementById('usernameInput').value = document.getElementById('username').textContent;
+            document.getElementById('emailInput').value = document.getElementById('email').textContent;
+            document.getElementById('profileImageInput').value = null;
+            document.getElementById('editProfileModal').classList.add('active');
+        }
+        function closeEditProfile() {
+            document.getElementById('editProfileModal').classList.remove('active');
+        }
+        function saveProfile() {
+            const newName = document.getElementById('usernameInput').value.trim();
+            const newEmail = document.getElementById('emailInput').value.trim();
+            if(newName) document.getElementById('username').textContent = newName;
+            if(newEmail) document.getElementById('email').textContent = newEmail;
+
+            const fileInput = document.getElementById('profileImageInput');
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profilePic').src = e.target.result;
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+            closeEditProfile();
+        }
+
+        // Settings Modal functions
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+        }
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        // About Us Modal functions
+        function openAboutUs() {
+            document.getElementById('aboutUsModal').classList.add('active');
+        }
+        function closeAboutUs() {
+            document.getElementById('aboutUsModal').classList.remove('active');
+        }
+
+        // Logout (placeholder)
+        function logout() {
+            alert('Logout functionality not implemented.');
+        }
+    </script>
+</body>
+</html>
