@@ -38,3 +38,5 @@ LocalStorage (profile & quiz results persistence)
 Custom CSS & Animations (modern responsive design)
 
 👉 This project acts like a mini Learning Management System (LMS) — ideal for learners and educators who want a lightweight, customizable platform for skill development.
+
+By Tanisha Beniwal
